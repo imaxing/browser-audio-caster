@@ -1,0 +1,73 @@
+export interface BrowserBroadcastProps {
+  src: string
+  speed?: number
+  autoPlay?: boolean
+  muted?: boolean
+  startTime?: number
+  onCanplay?: (total: Total) => void
+  onEnd?: () => void
+  onTimeUpdate?: (data: {
+    progress: number
+    total: Total
+    seconds: number
+    minutes: number
+    hours: number
+    format: string
+  }) => void
+}
+
+export interface Total {
+  hours?: number
+  minutes?: number
+  seconds?: number
+  format?: string
+}
+
+export const padZero = (value: number): string | number => (value < 10 ? `0${value}` : value)
+
+export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
+  const { src, speed = 1, autoPlay = true, muted = false, startTime = 0, onCanplay, onEnd, onTimeUpdate } = props
+  if (!src) return null
+
+  const audioContext: any = new Audio(src)
+  const total: Total = {}
+
+  audioContext.playbackRate = speed
+  audioContext.muted = muted
+  audioContext.currentTime = startTime
+  audioContext.onended = onEnd
+
+  audioContext.oncanplay = (e: any) => {
+    const duration = e.target?.duration
+    const hours = parseInt(`${(duration / (60 * 60)) % 24}`)
+    const minutes = parseInt(`${(duration / 60) % 60}`)
+    const seconds = parseInt(`${duration % 60}`)
+    total.hours = hours
+    total.minutes = minutes
+    total.seconds = seconds
+    total.format = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`
+    onCanplay && onCanplay(total)
+  }
+
+  audioContext.ontimeupdate = (e: any) => {
+    const { currentTime, duration } = e.target
+    const seconds = parseInt(`${currentTime % 60}`)
+    const minutes = parseInt(`${(currentTime / 60) % 60}`)
+    const hours = parseInt(`${(currentTime / (60 * 60)) % 24}`)
+    const format = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`
+
+    onTimeUpdate &&
+      onTimeUpdate({
+        progress: (currentTime / duration) * 100,
+        total,
+        seconds,
+        minutes,
+        hours,
+        format
+      })
+  }
+
+  autoPlay && setTimeout(audioContext.play.bind(audioContext), 10)
+
+  return audioContext
+}
