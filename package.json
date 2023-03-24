@@ -1,6 +1,6 @@
 {
   "name": "browser-audio-caster",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "keywords": [
     "browser-audio",
@@ -14,6 +14,11 @@
     "audio-manipulation",
     "streaming-audio"
   ],
+  "homepage": "https://github.com/imaxing/browser-audio-caster",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imaxing/browser-audio-caster.git"
+  },
   "main": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",
