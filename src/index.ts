@@ -5,13 +5,14 @@ export interface BrowserBroadcastProps {
   autoPlay?: boolean
   muted?: boolean
   startTime?: number
-  onCanplay?: (total: Total) => void
+  waiting?: number
+  onCanplay?: (format: string, hours?: number, minutes?: number, seconds?: number) => void
   onEnd?: () => void
   onPlaySuccess: () => void
   onPlayFail: (e: any) => void
   onTimeUpdate?: (data: {
     progress: number
-    total: Total
+    total: string
     seconds: number
     minutes: number
     hours: number
@@ -19,75 +20,56 @@ export interface BrowserBroadcastProps {
   }) => void
 }
 
-export interface Total {
-  hours?: number
-  minutes?: number
-  seconds?: number
-  format?: string
-}
-
 const padZero = (value: number): string | number => (value < 10 ? `0${value}` : value)
 
-export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
-  const {
-    src,
-    speed = 1,
-    autoPlay = true,
-    muted = false,
-    startTime = 0,
-    crossorigin,
-    onCanplay,
-    onEnd,
-    onTimeUpdate,
-    onPlayFail,
-    onPlaySuccess
-  } = props
-  if (!src) return null
+export default ({
+  src,
+  crossorigin,
+  speed = 1,
+  autoPlay = false,
+  muted = false,
+  startTime = 0,
+  waiting = 0,
+  onCanplay,
+  onEnd,
+  onPlaySuccess,
+  onPlayFail,
+  onTimeUpdate
+}: BrowserBroadcastProps): HTMLAudioElement | null => {
+  const audio = new Audio(src)
 
-  const total: Total = {}
-  const audioContext: any = new Audio(src)
+  audio.playbackRate = speed
+  audio.autoplay = autoPlay
+  audio.muted = muted
+  audio.currentTime = startTime
+  crossorigin && (audio.crossOrigin = crossorigin)
 
-  audioContext.playbackRate = speed
-  audioContext.muted = muted
-  audioContext.autoplay = autoPlay
-  audioContext.currentTime = startTime
-  audioContext.onended = onEnd
-  crossorigin && (audioContext.crossorigin = crossorigin)
+  let total = ''
 
-  audioContext.load()
-  audioContext.oncanplay = (e: any) => {
-    const duration = e.target?.duration
-    const hours = parseInt(`${(duration / (60 * 60)) % 24}`)
-    const minutes = parseInt(`${(duration / 60) % 60}`)
-    const seconds = parseInt(`${duration % 60}`)
-    total.hours = hours
-    total.minutes = minutes
-    total.seconds = seconds
-    total.format = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`
-    onCanplay && onCanplay(total)
-  }
+  setTimeout(() => audio.play().catch(onPlayFail), waiting)
 
-  audioContext.ontimeupdate = (e: any) => {
-    const { currentTime, duration } = e.target
-    const seconds = parseInt(`${currentTime % 60}`)
-    const minutes = parseInt(`${(currentTime / 60) % 60}`)
-    const hours = parseInt(`${(currentTime / (60 * 60)) % 24}`)
-    const format = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`
-
-    onTimeUpdate &&
-      onTimeUpdate({
-        progress: (currentTime / duration) * 100,
-        total,
-        seconds,
-        minutes,
-        hours,
-        format
-      })
-  }
-
-  audioContext.addEventListener('canplaythrough', (event: any) => {
-    autoPlay && audioContext.play().then(onPlaySuccess).catch(onPlayFail)
+  audio.addEventListener('canplay', () => {
+    const hours = Math.floor(audio.duration / 3600)
+    const minutes = Math.floor((audio.duration % 3600) / 60)
+    const seconds = Math.floor(audio.duration % 60)
+    total = [hours, minutes, seconds].map(padZero).join(':')
+    onCanplay?.(total, hours, minutes, seconds)
   })
 
-  return audioContext
+  onPlaySuccess && audio.addEventListener('play', onPlaySuccess)
+
+  onPlayFail && audio.addEventListener('error', onPlayFail)
+
+  onEnd && audio.addEventListener('ended', onEnd)
+
+  audio.addEventListener('timeupdate', () => {
+    const progress = (audio.currentTime / audio.duration) * 100
+    const hours = Math.floor(audio.currentTime / 3600)
+    const minutes = Math.floor((audio.currentTime % 3600) / 60)
+    const seconds = Math.floor(audio.currentTime % 60)
+    const format = [hours, minutes, seconds].map(padZero).join(':')
+
+    onTimeUpdate?.({ progress, hours, minutes, seconds, format, total })
+  })
+  return audio
 }

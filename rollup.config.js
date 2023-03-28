@@ -7,7 +7,7 @@ import pkg from './package.json'
 export default [
   {
     input: 'src/index.ts',
-    output: { name: 'browserAudioCaster', file: pkg.browser, format: 'umd' },
+    output: { name: 'createAudioCaster', file: pkg.browser, format: 'umd' },
     plugins: [typescript(), terser()]
   },
   {

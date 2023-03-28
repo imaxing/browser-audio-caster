@@ -8,23 +8,32 @@
     <script src="dist/index.umd.js"></script>
   </head>
   <body>
-    <button onclick="test()">1</button>
+    <button onclick="test(0)">1</button>
     <script>
-      function test() {
-        browserAudioCaster({ src: 'xx.mp3' })
-      }
-      setTimeout(() => {
-        const audio = browserAudioCaster({
-          src: 'https://www.yeecai.com/data/audio/D6D7BB2F37B250066DE03EAA2B29BE16.mp3'
+      const audios = [
+        'https://www.yeecai.com/data/audio/A69E904840D7E42D9479F2CA50D91F80.mp3',
+        'https://www.yeecai.com/data/audio/8FD200ABA7CD4105E54F6EF4BF24EF08.mp3',
+        'https://www.yeecai.com/data/audio/86F7A688DD4A718319D781D78B9CB150.mp3',
+        'https://www.yeecai.com/data/audio/C2B9F17B2AC88AD1DCE56086D45AF3CF.mp3',
+        'https://www.yeecai.com/data/audio/1886CDF9A86FF5D152F62DAB34A528B6.mp3',
+        'https://www.yeecai.com/data/audio/C8AEF9CB5C03CFBE6C82BE567B20F79D.mp3',
+        'https://www.yeecai.com/data/audio/3CC99ABE117031CDAA1585617EC8753C.mp3',
+        'https://www.yeecai.com/data/audio/9B27A1C00FF3DB6717188FB63657762D.mp3',
+        'https://www.yeecai.com/data/audio/76E0E1F6673FCCD70C0086DD9E73BF81.mp3',
+        'https://www.yeecai.com/data/audio/D6D7BB2F37B250066DE03EAA2B29BE16.mp3'
+      ]
+      let index = 0
+      function test(index) {
+        createAudioCaster({
+          src: audios[index],
+          speed: 2,
+          onCanplay: () => console.log('可以播报了'),
+          onEnd: () => test(++index),
+          onPlaySuccess: () => console.log('播报成功了'),
+          onPlayFail: () => console.log('播报失败了'),
+          onTimeUpdate: e => console.log(e.format)
         })
-
-        setTimeout(() => {
-          audio.pause()
-          browserAudioCaster({
-            src: 'https://www.yeecai.com/data/audio/A69E904840D7E42D9479F2CA50D91F80.mp3'
-          })
-        }, 2000)
-      }, 4000)
+      }
     </script>
   </body>
 </html>
