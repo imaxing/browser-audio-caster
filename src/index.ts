@@ -85,10 +85,6 @@ export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
       })
   }
 
-  // setTimeout(() => {
-  //   autoPlay && audioContext.play().then(onPlaySuccess).catch(onPlayFail)
-  // }, waiting)
-
   audioContext.addEventListener('canplaythrough', (event: any) => {
     autoPlay && audioContext.play().then(onPlaySuccess).catch(onPlayFail)
   })
