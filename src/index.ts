@@ -91,5 +91,7 @@ export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
     autoPlay && audioContext.play().then(onPlaySuccess).catch(onPlayFail)
   }
 
+  audioContext.load()
+
   return audioContext
 }
