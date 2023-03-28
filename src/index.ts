@@ -1,11 +1,15 @@
 export interface BrowserBroadcastProps {
   src: string
+  crossorigin?: string
   speed?: number
   autoPlay?: boolean
   muted?: boolean
   startTime?: number
   onCanplay?: (total: Total) => void
   onEnd?: () => void
+  onLoaded: (e: any) => void
+  onPlaySuccess: () => void
+  onPlayFail: (e: any) => void
   onTimeUpdate?: (data: {
     progress: number
     total: Total
@@ -26,7 +30,20 @@ export interface Total {
 export const padZero = (value: number): string | number => (value < 10 ? `0${value}` : value)
 
 export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
-  const { src, speed = 1, autoPlay = true, muted = false, startTime = 0, onCanplay, onEnd, onTimeUpdate } = props
+  const {
+    src,
+    speed = 1,
+    autoPlay = true,
+    muted = false,
+    startTime = 0,
+    crossorigin,
+    onLoaded,
+    onCanplay,
+    onEnd,
+    onTimeUpdate,
+    onPlayFail,
+    onPlaySuccess
+  } = props
   if (!src) return null
 
   const audioContext: any = new Audio(src)
@@ -34,8 +51,10 @@ export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
 
   audioContext.playbackRate = speed
   audioContext.muted = muted
+  audioContext.autoplay = autoPlay
   audioContext.currentTime = startTime
   audioContext.onended = onEnd
+  crossorigin && (audioContext.crossorigin = crossorigin)
 
   audioContext.oncanplay = (e: any) => {
     const duration = e.target?.duration
@@ -67,7 +86,10 @@ export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
       })
   }
 
-  autoPlay && setTimeout(audioContext.play.bind(audioContext), 10)
+  audioContext.oncanplaythrough = (e: any) => {
+    onLoaded && onLoaded(e)
+    autoPlay && audioContext.play().then(onPlaySuccess).catch(onPlayFail)
+  }
 
   return audioContext
 }

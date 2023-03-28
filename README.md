@@ -27,16 +27,19 @@ bac({
 
 #### Props
 
-| 参数名       | 说明         | 默认值 |
-| ------------ | ------------ | ------ |
-| src          | mp3 地址     | -      |
-| speed        | 播报速度     | 1      |
-| muted        | 是否静音     | false  |
-| startTime    | 开始播报时间 | 0      |
-| autoPlay     | 是否直接播报 | true   |
-| onCanplay    | 可以播报回调 | -      |
-| onEnd        | 播报结束回调 | -      |
-| onTimeUpdate | 播报进度回调 | -      |
+| 参数名        | 说明                             | 默认值 |
+| ------------- | -------------------------------- | ------ |
+| src           | mp3 地址                         | -      |
+| speed         | 播报速度                         | 1      |
+| muted         | 是否静音                         | false  |
+| startTime     | 开始播报时间                     | 0      |
+| autoPlay      | 是否直接播报                     | true   |
+| onCanplay     | 可以播报回调                     | -      |
+| onEnd         | 播报结束回调                     | -      |
+| onTimeUpdate  | 播报进度回调                     | -      |
+| onLoaded      | canplaythrough 回调              | -      |
+| onPlaySuccess | audio.play().then(onPlaySuccess) | -      |
+| onPlayFail    | audio.play().catch(onPlayFail)   | -      |
 
 #### Live demo
 
