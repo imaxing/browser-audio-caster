@@ -5,9 +5,9 @@ export interface BrowserBroadcastProps {
   autoPlay?: boolean
   muted?: boolean
   startTime?: number
+  waiting?: number
   onCanplay?: (total: Total) => void
   onEnd?: () => void
-  onLoaded: (e: any) => void
   onPlaySuccess: () => void
   onPlayFail: (e: any) => void
   onTimeUpdate?: (data: {
@@ -36,8 +36,8 @@ export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
     autoPlay = true,
     muted = false,
     startTime = 0,
+    waiting = 0,
     crossorigin,
-    onLoaded,
     onCanplay,
     onEnd,
     onTimeUpdate,
@@ -86,12 +86,9 @@ export default (props: BrowserBroadcastProps): HTMLAudioElement | null => {
       })
   }
 
-  audioContext.oncanplaythrough = (e: any) => {
-    onLoaded && onLoaded(e)
+  setTimeout(() => {
     autoPlay && audioContext.play().then(onPlaySuccess).catch(onPlayFail)
-  }
-
-  audioContext.load()
+  }, waiting)
 
   return audioContext
 }
