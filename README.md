@@ -11,17 +11,18 @@ npm i browser-audio-caster
 #### Usage
 
 ```js
-import bac from 'browser-audio-caster'
+import play from 'browser-audio-caster'
 
-bac({
+play({
   src,
   speed,
   muted,
+  waiting,
+  startTime,
+  autoPlay,
   onCanplay,
   onEnd,
-  onTimeUpdate,
-  startTime,
-  autoPlay
+  onTimeUpdate
 })
 ```
 
@@ -33,11 +34,11 @@ bac({
 | speed         | 播报速度                         | 1      |
 | muted         | 是否静音                         | false  |
 | startTime     | 开始播报时间                     | 0      |
+| waiting       | 触发播报等待时间                 | 0      |
 | autoPlay      | 是否直接播报                     | true   |
 | onCanplay     | 可以播报回调                     | -      |
 | onEnd         | 播报结束回调                     | -      |
 | onTimeUpdate  | 播报进度回调                     | -      |
-| onLoaded      | canplaythrough 回调              | -      |
 | onPlaySuccess | audio.play().then(onPlaySuccess) | -      |
 | onPlayFail    | audio.play().catch(onPlayFail)   | -      |
 
