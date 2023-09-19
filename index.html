@@ -27,10 +27,10 @@
         createAudioCaster({
           src: audios[index],
           speed: 2,
-          onCanplay: () => console.log('可以播报了'),
+          onCanplay: (e) => console.log('可以播报了', e.total),
           onEnd: () => test(++index),
-          onPlaySuccess: () => console.log('播报成功了'),
-          onPlayFail: () => console.log('播报失败了'),
+          onPlay: () => console.log('播报成功了'),
+          onError: () => console.log('播报失败了'),
           onTimeUpdate: e => console.log(e.format)
         })
       }

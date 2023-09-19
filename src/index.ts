@@ -1,3 +1,10 @@
+export interface OnCanplayProps {
+  format: string
+  hours: number
+  minutes: number
+  seconds: number
+  total: string
+}
 export interface BrowserBroadcastProps {
   src: string
   crossorigin?: string
@@ -6,10 +13,10 @@ export interface BrowserBroadcastProps {
   muted?: boolean
   startTime?: number
   waiting?: number
-  onCanplay?: (format: string, hours?: number, minutes?: number, seconds?: number) => void
+  onCanplay?: (data: OnCanplayProps) => void
   onEnd?: () => void
-  onPlaySuccess: () => void
-  onPlayFail: (e: any) => void
+  onPlay: () => void
+  onError: (e: any) => void
   onTimeUpdate?: (data: {
     progress: number
     total: string
@@ -32,8 +39,8 @@ export default ({
   waiting = 0,
   onCanplay,
   onEnd,
-  onPlaySuccess,
-  onPlayFail,
+  onPlay,
+  onError,
   onTimeUpdate
 }: BrowserBroadcastProps): HTMLAudioElement | null => {
   const audio = new Audio(src)
@@ -46,19 +53,20 @@ export default ({
 
   let total = ''
 
-  setTimeout(() => audio.play().catch(onPlayFail), waiting)
+  setTimeout(() => audio.play().catch(onError), waiting)
 
   audio.addEventListener('canplay', () => {
     const hours = Math.floor(audio.duration / 3600)
     const minutes = Math.floor((audio.duration % 3600) / 60)
     const seconds = Math.floor(audio.duration % 60)
     total = [hours, minutes, seconds].map(padZero).join(':')
-    onCanplay?.(total, hours, minutes, seconds)
+    const format = [hours, minutes, seconds].map(padZero).join(':')
+    onCanplay?.({ total, hours, minutes, seconds, format })
   })
 
-  onPlaySuccess && audio.addEventListener('play', onPlaySuccess)
+  onPlay && audio.addEventListener('play', onPlay)
 
-  onPlayFail && audio.addEventListener('error', onPlayFail)
+  onError && audio.addEventListener('error', onError)
 
   onEnd && audio.addEventListener('ended', onEnd)
 
