@@ -15,8 +15,8 @@ export interface BrowserBroadcastProps {
   waiting?: number
   onCanplay?: (data: OnCanplayProps) => void
   onEnd?: () => void
-  onPlay: () => void
-  onError: (e: any) => void
+  onPlay?: () => void
+  onError?: (e: any) => void
   onTimeUpdate?: (data: {
     progress: number
     total: string
