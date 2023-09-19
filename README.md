@@ -30,20 +30,19 @@ play({
 
 #### Props
 
-| 参数名       | 说明             | 默认值 |
-| ------------ | ---------------- | ------ |
-| src          | mp3 地址         | -      |
-| speed        | 播报速度         | 1      |
-| muted        | 是否静音         | false  |
-| startTime    | 开始播报时间     | 0      |
-| waiting      | 触发播报等待时间 | 0      |
-| autoPlay     | 是否直接播报     | true   |
-| onCanplay    | 可以播报回调     | -      |
-| onEnd        | on end     | -      |
-| onPlay       | 播报结束回调     | -      |
-| onTimeUpdate | 播报进度回调     | -      |
-| onPlay       | on play        | -      |
-| onError      | on error         | -      |
+| 参数名       | 说明                                               | 默认值 |
+| ------------ | -------------------------------------------------- | ------ |
+| src          | mp3 地址                                           | -      |
+| speed        | 播报速度                                           | 1      |
+| muted        | 是否静音                                           | false  |
+| startTime    | 开始时间                                           | 0      |
+| waiting      | 延迟播报时间                                       | 0      |
+| autoPlay     | 是否直接播报, 设为 false 需要使用返回值调用 play() | true   |
+| onCanplay    | on canplay                                         | -      |
+| onEnd        | on end                                             | -      |
+| onPlay       | on play                                            | -      |
+| onError      | on error                                           | -      |
+| onTimeUpdate | on update                                          | -      |
 
 #### Live demo
 
