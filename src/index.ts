@@ -9,6 +9,7 @@ export interface BrowserBroadcastProps {
   src: string
   crossorigin?: string
   speed?: number
+  context?: HTMLAudioElement
   autoPlay?: boolean
   muted?: boolean
   startTime?: number
@@ -32,6 +33,7 @@ const padZero = (value: number): string | number => (value < 10 ? `0${value}` : 
 export default ({
   src,
   crossorigin,
+  context,
   speed = 1,
   autoPlay = false,
   muted = false,
@@ -43,7 +45,7 @@ export default ({
   onError,
   onTimeUpdate
 }: BrowserBroadcastProps): HTMLAudioElement | null => {
-  const audio = new Audio(src)
+  const audio = context || new Audio(src)
 
   audio.playbackRate = speed
   audio.autoplay = autoPlay
@@ -79,5 +81,5 @@ export default ({
 
     onTimeUpdate?.({ progress, hours, minutes, seconds, format, total })
   })
-  return audio
+  return context || audio
 }
