@@ -46,7 +46,7 @@ export default ({
   onTimeUpdate
 }: BrowserBroadcastProps): HTMLAudioElement | null => {
   const audio = context || new Audio(src)
-
+  audio.src = src
   audio.playbackRate = speed
   audio.autoplay = autoPlay
   audio.muted = muted
