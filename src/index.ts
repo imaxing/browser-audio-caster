@@ -1,8 +1,11 @@
-export interface OnCanplayProps {
+export interface AudioState {
   format: string
   hours: number
   minutes: number
+  progress: number
   seconds: number
+  duration: number
+  currentTime: number
   total: string
 }
 export interface BrowserBroadcastProps {
@@ -14,18 +17,11 @@ export interface BrowserBroadcastProps {
   muted?: boolean
   startTime?: number
   waiting?: number
-  onCanplay?: (data: OnCanplayProps) => void
+  onCanplay?: (data: AudioState) => void
   onEnd?: () => void
   onPlay?: () => void
   onError?: (e: any) => void
-  onTimeUpdate?: (data: {
-    progress: number
-    total: string
-    seconds: number
-    minutes: number
-    hours: number
-    format: string
-  }) => void
+  onTimeUpdate?: (data: AudioState) => void
 }
 
 const padZero = (value: number): string | number => (value < 10 ? `0${value}` : value)
@@ -63,7 +59,16 @@ export default ({
     const seconds = Math.floor(audio.duration % 60)
     total = [hours, minutes, seconds].map(padZero).join(':')
     const format = [hours, minutes, seconds].map(padZero).join(':')
-    onCanplay?.({ total, hours, minutes, seconds, format })
+    onCanplay?.({
+      progress: 0,
+      total,
+      hours,
+      minutes,
+      seconds,
+      format,
+      duration: audio.duration,
+      currentTime: audio.currentTime
+    })
   })
 
   onPlay && audio.addEventListener('play', onPlay)
@@ -79,7 +84,16 @@ export default ({
     const seconds = Math.floor(audio.currentTime % 60)
     const format = [hours, minutes, seconds].map(padZero).join(':')
 
-    onTimeUpdate?.({ progress, hours, minutes, seconds, format, total })
+    onTimeUpdate?.({
+      progress,
+      hours,
+      minutes,
+      seconds,
+      format,
+      total,
+      duration: audio.duration,
+      currentTime: audio.currentTime
+    })
   })
   return context || audio
 }
